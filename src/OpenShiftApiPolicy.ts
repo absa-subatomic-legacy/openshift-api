@@ -1,4 +1,4 @@
-import {logger} from "@atomist/automation-client";
+import * as winston from "winston";
 import {OpenShiftApiElement} from "./base/OpenShiftApiElement";
 import {AwaitAxios} from "./http/AwaitAxios";
 import {OpenshiftResource} from "./resources/OpenshiftResource";
@@ -51,11 +51,11 @@ export class OpenShiftApiPolicy extends OpenShiftApiElement {
     public async addRoleToAccount(openshiftRole: OpenshiftResource, role: string, namespace: string, newRole: boolean) {
         //  If this is a new role then post else do a put
         if (newRole) {
-            logger.debug("Role not found. Creating new role binding via post...");
+            winston.createLogger().debug("Role not found. Creating new role binding via post...");
             return await this.getAxiosInstanceOApi().post(ResourceUrl.getResourceKindUrl(
                 ResourceFactory.baseResource("RoleBinding"), namespace), openshiftRole);
         } else {
-            logger.debug("Found role. Adding user to role binding list via put...");
+            winston.createLogger().debug("Found role. Adding user to role binding list via put...");
             return await this.getAxiosInstanceOApi().put(`${ResourceUrl.getResourceKindUrl(
                 ResourceFactory.baseResource("RoleBinding"), namespace)}/${role}`, openshiftRole);
         }
@@ -68,9 +68,9 @@ export class OpenShiftApiPolicy extends OpenShiftApiElement {
         if (openshiftRole === null) {
             newRole = true;
             openshiftRole = ResourceFactory.baseRoleBindingResource(destinationNamespace, role);
-            logger.debug("Role not found. Creating new role binding");
+            winston.createLogger().debug("Role not found. Creating new role binding");
         } else {
-            logger.debug("Role found OK");
+            winston.createLogger().debug("Role found OK");
         }
         return {roleBinding: openshiftRole, aNewRole: newRole};
     }
@@ -85,7 +85,7 @@ export class OpenShiftApiPolicy extends OpenShiftApiElement {
         const instance = this.getAxiosInstanceOApi();
         const roleToEdit = await this.findExistingRole(instance, role, namespace);
         if (roleToEdit === null) {
-            logger.info("removeRoleFromUserAccount: Role not found. Nothing to do");
+            winston.createLogger().info("removeRoleFromUserAccount: Role not found. Nothing to do");
         } else {
             // Filter by all that are NOT the user to be removed
             roleToEdit.subjects = roleToEdit.subjects.filter(subject => subject.name !== username);
@@ -99,8 +99,8 @@ export class OpenShiftApiPolicy extends OpenShiftApiElement {
     private async findExistingRole(axios: AwaitAxios, role: string, namespace: string): Promise<OpenshiftResource> {
         const response = await axios.get(`namespaces/${namespace}/rolebindings`);
 
-        logger.debug(`findExistingRole response.status: ${JSON.stringify(response.status)}`);
-        logger.debug(`findExistingRole response.data: ${JSON.stringify(response.data)}`);
+        winston.createLogger().debug(`findExistingRole response.status: ${JSON.stringify(response.status)}`);
+        winston.createLogger().debug(`findExistingRole response.data: ${JSON.stringify(response.data)}`);
 
         let openshiftResource: OpenshiftResource = null;
         for (const item of response.data.items) {

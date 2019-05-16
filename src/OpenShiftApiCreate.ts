@@ -1,4 +1,4 @@
-import {logger} from "@atomist/automation-client";
+import * as winston from "winston";
 import {OpenShiftApiElement} from "./base/OpenShiftApiElement";
 import {OpenshiftApiResult} from "./base/OpenshiftApiResult";
 import {OpenShiftConfigContract} from "./base/OpenShiftConfigContract";
@@ -22,7 +22,7 @@ export class OpenShiftApiCreate extends OpenShiftApiElement {
     }
 
     public async create(resource: OpenshiftResource, namespace: string = "default", apply = false): Promise<OpenshiftApiResult> {
-        logger.info(`Creating resource ${resource.kind} in ${namespace}`);
+        winston.createLogger().info(`Creating resource ${resource.kind} in ${namespace}`);
         if (apply) {
             return await this.apply(resource, namespace);
         }
@@ -39,7 +39,7 @@ export class OpenShiftApiCreate extends OpenShiftApiElement {
     }
 
     public async apply(resource: OpenshiftResource, namespace: string = "default"): Promise<OpenshiftApiResult> {
-        logger.info(`Applying resource ${resource.kind} in ${namespace}`);
+        winston.createLogger().info(`Applying resource ${resource.kind} in ${namespace}`);
         if (resource.kind === "List") {
             return await this.processList(resource, namespace, CreateType.apply);
         }
@@ -54,7 +54,7 @@ export class OpenShiftApiCreate extends OpenShiftApiElement {
     }
 
     public async replace(resource: OpenshiftResource, namespace: string = "default"): Promise<OpenshiftApiResult> {
-        logger.info(`Replacing resource ${resource.kind} in ${namespace}`);
+        winston.createLogger().info(`Replacing resource ${resource.kind} in ${namespace}`);
         if (resource.kind === "List") {
             return await this.processList(resource, namespace, CreateType.replace);
         }
@@ -66,7 +66,7 @@ export class OpenShiftApiCreate extends OpenShiftApiElement {
         const namedUrl = ResourceUrl.getNamedResourceUrl(resource, namespace);
         const exists = await instance.get(namedUrl);
         if (isSuccessCode(exists.status)) {
-            logger.info("Updating resource: " + namedUrl);
+            winston.createLogger().info("Updating resource: " + namedUrl);
 
             this.immutabilityPreserver.preserveImmutability(resource, exists.data);
 
