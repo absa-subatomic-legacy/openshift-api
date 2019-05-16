@@ -1,6 +1,6 @@
 {
   "name": "@absa-subatomic/openshift-api",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "The OpenShift API code originally used in Quantum Mechanic isolated for reuse",
   "main": "build/index.js",
   "types": "build/index.d.ts",
