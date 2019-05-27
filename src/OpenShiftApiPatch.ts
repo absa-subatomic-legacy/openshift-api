@@ -1,13 +1,13 @@
-import * as winston from "winston";
 import {OpenShiftApiElement} from "./base/OpenShiftApiElement";
 import {OpenshiftApiResult} from "./base/OpenshiftApiResult";
+import {logger} from "./logging/Logger";
 import {OpenshiftResource} from "./resources/OpenshiftResource";
 import {ResourceUrl} from "./resources/ResourceUrl";
 
 export class OpenShiftApiPatch extends OpenShiftApiElement {
 
     public async patch(resource: OpenshiftResource, namespace: string = "default", deleteMetaData: boolean = true): Promise<OpenshiftApiResult> {
-        winston.createLogger().info(`Patching resource ${resource.kind} in ${namespace}`);
+        logger.info(`Patching resource ${resource.kind} in ${namespace}`);
 
         const instance = this.getAxiosInstanceForResource(resource);
         const url = ResourceUrl.getNamedResourceUrl(resource, namespace);
