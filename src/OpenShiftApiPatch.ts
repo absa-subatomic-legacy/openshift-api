@@ -7,7 +7,7 @@ import {ResourceUrl} from "./resources/ResourceUrl";
 export class OpenShiftApiPatch extends OpenShiftApiElement {
 
     public async patch(resource: OpenshiftResource, namespace: string = "default", deleteMetaData: boolean = true): Promise<OpenshiftApiResult> {
-        logger.info(`Patching resource ${resource.kind} in ${namespace}`);
+        logger().info(`Patching resource ${resource.kind} in ${namespace}`);
 
         const instance = this.getAxiosInstanceForResource(resource);
         const url = ResourceUrl.getNamedResourceUrl(resource, namespace);

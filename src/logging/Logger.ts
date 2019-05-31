@@ -1,13 +1,14 @@
 import * as winston from "winston";
-import {Logger} from "winston";
+import {loggers, transports} from "winston";
 
-export const logger: Logger = createLogger();
+createLogger();
+
+export function logger() {
+    return loggers.get("@absa-subatomic/openshift-api");
+}
 
 function createLogger() {
-    const loggerInstance: Logger = winston.createLogger({
-        exitOnError: false,
-    });
-    const ct = new winston.transports.Console({
+    loggers.add("@absa-subatomic/openshift-api", {
         level: "debug",
         format: winston.format.combine(
             winston.format.timestamp(),
@@ -17,8 +18,8 @@ function createLogger() {
                 return `${timestamp} [${label}] [${level}]: ${message}`;
             }),
         ),
+        transports: [
+            new transports.Console(),
+        ],
     });
-
-    loggerInstance.add(ct);
-    return loggerInstance;
 }

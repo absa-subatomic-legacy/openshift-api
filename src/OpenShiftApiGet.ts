@@ -11,7 +11,7 @@ export class OpenShiftApiGet extends OpenShiftApiElement {
         resourceDefinition.metadata.name = resourceName;
         const instance = this.getAxiosInstanceForResource(resourceDefinition);
         const url = ResourceUrl.getNamedResourceUrl(resourceDefinition, namespace);
-        logger.info(`Trying to get resource ${url}`);
+        logger().info(`Trying to get resource ${url}`);
         return await instance.get(url);
     }
 
@@ -19,7 +19,7 @@ export class OpenShiftApiGet extends OpenShiftApiElement {
         const resourceDefinition = ResourceFactory.baseResource(resourceKind, apiVersion);
         const instance = this.getAxiosInstanceForResource(resourceDefinition);
         const url = ResourceUrl.getResourceKindUrl(resourceDefinition, namespace);
-        logger.info(`Trying to get resource ${url}`);
+        logger().info(`Trying to get resource ${url}`);
         return await instance.get(url);
     }
 
