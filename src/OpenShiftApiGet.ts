@@ -1,6 +1,6 @@
-import * as winston from "winston";
 import {OpenShiftApiElement} from "./base/OpenShiftApiElement";
 import {OpenshiftApiResult} from "./base/OpenshiftApiResult";
+import {logger} from "./logging/Logger";
 import {ResourceFactory} from "./resources/ResourceFactory";
 import {ResourceUrl} from "./resources/ResourceUrl";
 
@@ -11,7 +11,7 @@ export class OpenShiftApiGet extends OpenShiftApiElement {
         resourceDefinition.metadata.name = resourceName;
         const instance = this.getAxiosInstanceForResource(resourceDefinition);
         const url = ResourceUrl.getNamedResourceUrl(resourceDefinition, namespace);
-        winston.createLogger().info(`Trying to get resource ${url}`);
+        logger().info(`Trying to get resource ${url}`);
         return await instance.get(url);
     }
 
@@ -19,7 +19,7 @@ export class OpenShiftApiGet extends OpenShiftApiElement {
         const resourceDefinition = ResourceFactory.baseResource(resourceKind, apiVersion);
         const instance = this.getAxiosInstanceForResource(resourceDefinition);
         const url = ResourceUrl.getResourceKindUrl(resourceDefinition, namespace);
-        winston.createLogger().info(`Trying to get resource ${url}`);
+        logger().info(`Trying to get resource ${url}`);
         return await instance.get(url);
     }
 

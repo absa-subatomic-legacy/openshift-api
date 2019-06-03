@@ -1,9 +1,9 @@
-import * as winston from "winston";
 import {OpenShiftApiElement} from "./base/OpenShiftApiElement";
 import {OpenshiftApiResult} from "./base/OpenshiftApiResult";
 import {OpenShiftConfigContract} from "./base/OpenShiftConfigContract";
 import {ImmutabilityPreserver} from "./common/ImmutabilityPreserver";
 import {isSuccessCode} from "./http/Http";
+import {logger} from "./logging/Logger";
 import {OpenshiftResource} from "./resources/OpenshiftResource";
 import {ResourceUrl} from "./resources/ResourceUrl";
 
@@ -16,13 +16,13 @@ export class OpenShiftApiCreate extends OpenShiftApiElement {
         this.immutabilityPreserver = new ImmutabilityPreserver();
     }
 
-    public async post( url: string, resource: OpenshiftResource, api: string = "v1") {
+    public async post(url: string, resource: OpenshiftResource, api: string = "v1") {
         const instance = this.getAxiosInstanceOApi(api);
         return await instance.post(url, resource);
     }
 
     public async create(resource: OpenshiftResource, namespace: string = "default", apply = false): Promise<OpenshiftApiResult> {
-        winston.createLogger().info(`Creating resource ${resource.kind} in ${namespace}`);
+        logger().info(`Creating resource ${resource.kind} in ${namespace}`);
         if (apply) {
             return await this.apply(resource, namespace);
         }
@@ -39,7 +39,7 @@ export class OpenShiftApiCreate extends OpenShiftApiElement {
     }
 
     public async apply(resource: OpenshiftResource, namespace: string = "default"): Promise<OpenshiftApiResult> {
-        winston.createLogger().info(`Applying resource ${resource.kind} in ${namespace}`);
+        logger().info(`Applying resource ${resource.kind} in ${namespace}`);
         if (resource.kind === "List") {
             return await this.processList(resource, namespace, CreateType.apply);
         }
@@ -54,7 +54,7 @@ export class OpenShiftApiCreate extends OpenShiftApiElement {
     }
 
     public async replace(resource: OpenshiftResource, namespace: string = "default"): Promise<OpenshiftApiResult> {
-        winston.createLogger().info(`Replacing resource ${resource.kind} in ${namespace}`);
+        logger().info(`Replacing resource ${resource.kind} in ${namespace}`);
         if (resource.kind === "List") {
             return await this.processList(resource, namespace, CreateType.replace);
         }
@@ -66,7 +66,7 @@ export class OpenShiftApiCreate extends OpenShiftApiElement {
         const namedUrl = ResourceUrl.getNamedResourceUrl(resource, namespace);
         const exists = await instance.get(namedUrl);
         if (isSuccessCode(exists.status)) {
-            winston.createLogger().info("Updating resource: " + namedUrl);
+            logger().info("Updating resource: " + namedUrl);
 
             this.immutabilityPreserver.preserveImmutability(resource, exists.data);
 
