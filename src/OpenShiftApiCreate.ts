@@ -35,6 +35,7 @@ export class OpenShiftApiCreate extends OpenShiftApiElement {
 
         const instance = this.getAxiosInstanceForResource(resource);
         const url = ResourceUrl.getResourceKindUrl(resource, namespace);
+        logger().info(`Creating resource with url:  ${url}`);
         return await instance.post(url, resource);
     }
 
@@ -74,6 +75,7 @@ export class OpenShiftApiCreate extends OpenShiftApiElement {
         }
 
         const url = ResourceUrl.getResourceKindUrl(resource, namespace);
+        logger().info(`Replacing resource with url:  ${url}`);
         return await instance.post(url, resource);
     }
 
